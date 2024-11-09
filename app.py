@@ -14,7 +14,7 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     # Create tables
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
@@ -25,7 +25,7 @@ def init_db():
         password TEXT NOT NULL,
         address TEXT NOT NULL
     )''')
-    
+
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS orders (
         order_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +33,7 @@ def init_db():
         total_price REAL NOT NULL,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )''')
-    
+
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS order_items (
         order_item_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +43,7 @@ def init_db():
         quantity INTEGER NOT NULL,
         FOREIGN KEY(order_id) REFERENCES orders(order_id)
     )''')
-    
+
     conn.commit()
     conn.close()
 
@@ -73,7 +73,7 @@ def register():
         ''', (name, mobile, email, password, address))
         conn.commit()
         conn.close()
-        
+
         return redirect(url_for('index'))
 
     return render_template('register.html')
@@ -123,14 +123,14 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        
+
         # Check for user in the database
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM users WHERE email = ? AND password = ?', (email, password))
         user = cursor.fetchone()
         conn.close()
-        
+
         if user:
             session['user_id'] = user['id']
             return redirect(url_for('index'))
